@@ -1,0 +1,23 @@
+version: '3.7'
+services:
+  queue:
+    image: rabbitmq:3
+  web:
+    image: gcr.io/dev-plx/alba-web
+    build:
+      context: ./app
+      dockerfile: fastapi.dockerfile
+    environment:
+      &celery_env
+      - CELERY_BROKER_URL=amqp://guest:guest@queue:5672
+      - CELERY_RESULT_BACKEND=amqp
+    depends_on:
+      - queue
+  worker:
+    image: gcr.io/dev-plx/alba-worker
+    build:
+      context: ./app
+      dockerfile: celery.dockerfile
+    environment: *celery_env
+    depends_on:
+      - queue

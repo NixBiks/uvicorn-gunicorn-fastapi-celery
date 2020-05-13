@@ -1,0 +1,15 @@
+version: '3.7'
+services:
+  web:
+    build:
+      args:
+        INSTALL_DEV: 1
+    ports:
+    - 8080:80
+    volumes: &backend
+    - ./app/backend:/app/backend
+  worker:
+    build:
+      args:
+        INSTALL_DEV: 1
+    volumes: *backend
